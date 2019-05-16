@@ -1,6 +1,6 @@
 error:
   no_login_ticket: "Your login request did not include a login ticket. There may be a problem with the authentication system."
-  login_ticket_already_used: "The login ticket you provided has already been used up. Please try logging in again."
+  login_ticket_already_used: "The login screen needed to be refreshed. Please try logging in again."
   login_timeout: "You took too long to enter your credentials. Please try again."
   invalid_login_ticket: "The login ticket you provided is invalid. There may be a problem with the authentication system."
   login_ticket_needs_post_request: "To generate a login ticket, you must make a POST request."
