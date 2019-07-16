@@ -16,6 +16,7 @@ RUN apt-get -o Acquire::Check-Valid-Until=false update -qq && apt-get install -y
 RUN mkdir /app
 WORKDIR /app
 ADD Gemfile /app/Gemfile
+ADD Gemfile.lock /app/Gemfile.lock
 ADD rubycas-server.gemspec /app/rubycas-server.gemspec
 RUN bundle install
 
