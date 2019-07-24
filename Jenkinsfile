@@ -52,6 +52,9 @@ sudo docker push $AWS_ACCOUNT_ID.dkr.ecr.us-west-2.amazonaws.com/ssoweb:${VERSIO
                 branch 'k8poc'
             }
       steps {
+        script {
+                    env.current_tag = sh(returnStdout: true, script: "export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin && kubectl get deployment -n dev ssoweb -o jsonpath=\"{..image}\" | cut -d ':' -f 2")
+        }
         sh '''
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
 eval sudo $(aws ecr get-login --no-include-email --region us-west-2)
@@ -59,6 +62,9 @@ latest_tag=$(aws ecr describe-images --repository-name ssoweb --region us-west-2
 sleep 60
 fluxctl release --k8s-fwd-ns=flux --workload=dev:helmrelease/rubycas-dev --namespace=dev --update-image=$AWS_ACCOUNT_ID.dkr.ecr.us-west-2.amazonaws.com/ssoweb:${latest_tag}
 '''
+        script {
+                    env.DEPLOY_STG_STATUS = "1"
+        }
       }
     }
     stage('stg test execution ') {
@@ -78,6 +84,23 @@ fluxctl release --k8s-fwd-ns=flux --workload=dev:helmrelease/rubycas-dev --names
       }
     }
   }
+  post {
+        success {
+            sh 'env'
+            echo "FOO is '${DEPLOY_STG_STATUS}'"
+            echo "FOO is '${current_tag}'"
+        }
+        failure {
+            sh 'env'
+            echo "FOO is '${DEPLOY_STG_STATUS}'" 
+            echo "FOO is '${current_tag}'"
+            sh  '''
+            export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
+            fluxctl release --k8s-fwd-ns=flux --workload=dev:helmrelease/rubycas-dev --namespace=dev --update-image=$AWS_ACCOUNT_ID.dkr.ecr.us-west-2.amazonaws.com/ssoweb:${current_tag}
+            '''
+
+        }
+    }
   triggers {
     pollSCM('* * * * *')
   }
