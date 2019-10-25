@@ -29,7 +29,7 @@ $gemspec = Gem::Specification.new do |s|
   s.add_dependency("pg", "0.17.1")
   s.add_dependency("activerecord", ">= 2.3.12", "<= 6.0")
   s.add_dependency("activesupport", ">= 2.3.12", "<= 6.0")
-  s.add_dependency("sinatra", "~> 1.0")
+  s.add_dependency("sinatra", "~> 1.3")
   s.add_dependency("sinatra-r18n", '~> 1.1.0')
   s.add_dependency("crypt-isaac", "~> 0.9.1")
 
